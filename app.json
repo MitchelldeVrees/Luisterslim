@@ -31,7 +31,7 @@
       "typedRoutes": true
     },
     "extra": {
-      "azureEndpoint": "https://YOUR-FUNCTION.azurewebsites.net"
+      "azureEndpoint": "https://audiotranscriben.azurewebsites.net/api/HttpTrigger2?"
     }
   }
 }

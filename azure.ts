@@ -1,3 +1,4 @@
+// azure.ts
 import Constants from 'expo-constants';
 
 const { azureEndpoint } = (Constants.expoConfig?.extra ?? {}) as { azureEndpoint: string };
@@ -7,18 +8,20 @@ export async function uploadToAzure(
   name: string,
   type: string,
   onUploadProgress?: (percent: number) => void
-): Promise<{ statusUrl: string; operationId: string }> {
+): Promise<{ transcript: string }> {      // only transcript
   const form = new FormData();
-  form.append('file', { uri, name, type } as any);
+  form.append('audioFile', { uri, name, type } as any);
 
   return new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest();
+    console.log("SENDING TO AZURE", azureEndpoint);
     xhr.open('POST', `${azureEndpoint}/api/upload`);
     xhr.onload = () => {
-      if (xhr.status === 200 || xhr.status === 202) {
+      if (xhr.status === 200) {
         try {
           const data = JSON.parse(xhr.responseText);
-          resolve({ statusUrl: data.statusUrl, operationId: data.operationId });
+          console.log('Upload response:', data);
+          resolve({ transcript: data.transcript });  // pull transcript
         } catch (e) {
           reject(e);
         }
@@ -36,17 +39,4 @@ export async function uploadToAzure(
     }
     xhr.send(form as any);
   });
-}
-
-export async function pollStatus(url: string): Promise<{ transcript: string }> {
-  let delay = 3000;
-  while (true) {
-    const res = await fetch(url);
-    const data = await res.json();
-    if (data.status === 'succeeded') {
-      return { transcript: data.transcript as string };
-    }
-    await new Promise((r) => setTimeout(r, delay));
-    delay = Math.min(delay * 1.5, 15000);
-  }
 }

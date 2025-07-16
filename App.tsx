@@ -1,11 +1,11 @@
-import React from 'react';
-import { StyleSheet, View, Text, Pressable } from 'react-native';
-import * as DocumentPicker from 'expo-document-picker';
 import { Audio } from 'expo-av';
+import * as DocumentPicker from 'expo-document-picker';
+import React from 'react';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
-import { colors, fontFamily, rounded } from './theme';
-import { uploadToAzure, pollStatus } from './azure';
+import { uploadToAzure } from './azure';
 import { LoadingOverlay } from './components/LoadingOverlay';
+import { colors, fontFamily, rounded } from './theme';
 
 export default function App() {
   const [file, setFile] = React.useState<
@@ -52,10 +52,18 @@ export default function App() {
   const transcribe = async () => {
     if (!file) return;
     overlay.value = withTiming(1, { duration: 300 });
+
     try {
-      const { statusUrl } = await uploadToAzure(file.uri, file.name, file.mimeType);
-      const result = await pollStatus(statusUrl);
-      setTranscript(result.transcript);
+      const { transcript } = await uploadToAzure(
+        file.uri,
+        file.name,
+        file.mimeType,
+        (p) => console.log(`Upload progress: ${p.toFixed(0)}%`)
+      );
+      console.log('Transcript from Azure:', transcript);
+      setTranscript(transcript);
+    } catch (e: any) {
+      console.error(e);
     } finally {
       overlay.value = withTiming(0, { duration: 300 });
     }
