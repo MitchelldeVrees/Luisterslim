@@ -1,11 +1,13 @@
 import { Audio } from 'expo-av';
 import * as DocumentPicker from 'expo-document-picker';
 import React from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Alert, Pressable, StyleSheet, Text, View } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
-import { uploadToAzure } from './azure';
-import { LoadingOverlay } from './components/LoadingOverlay';
-import { colors, fontFamily, rounded } from './theme';
+import { router } from 'expo-router';
+import { uploadToAzure } from '../azure';
+import { LoadingOverlay } from '../components/LoadingOverlay';
+import { improveTranscript, summariseTranscript } from '../openai';
+import { colors, fontFamily, rounded } from '../theme';
 
 export default function App() {
   const [file, setFile] = React.useState<
@@ -18,7 +20,6 @@ export default function App() {
       }
     | null
   >(null);
-  const [transcript, setTranscript] = React.useState<string | null>(null);
   const opacity = useSharedValue(0);
   const overlay = useSharedValue(0);
 
@@ -32,7 +33,6 @@ export default function App() {
       const duration = status.isLoaded ? status.durationMillis ?? 0 : 0;
       await sound.unloadAsync();
       setFile({ uri, name, mimeType, size, duration });
-      setTranscript(null);
       opacity.value = 0;
       opacity.value = withTiming(1, { duration: 500 });
     }
@@ -61,9 +61,12 @@ export default function App() {
         (p) => console.log(`Upload progress: ${p.toFixed(0)}%`)
       );
       console.log('Transcript from Azure:', transcript);
-      setTranscript(transcript);
+
+      const improved = await improveTranscript(transcript);
+      const summary = await summariseTranscript(improved);
+      router.push({ pathname: '/result', params: { improved, summary } });
     } catch (e: any) {
-      console.error(e);
+      Alert.alert('Fout', e.message);
     } finally {
       overlay.value = withTiming(0, { duration: 300 });
     }
@@ -84,11 +87,6 @@ export default function App() {
             <Text style={styles.transcribeText}>Notuleren</Text>
           </Pressable>
         </Animated.View>
-      )}
-      {transcript && (
-        <View style={styles.transcriptBox}>
-          <Text style={styles.transcript}>{transcript}</Text>
-        </View>
       )}
       <LoadingOverlay visible={overlay} onCancel={() => (overlay.value = withTiming(0, { duration: 300 }))} />
     </View>
@@ -139,16 +137,6 @@ const styles = StyleSheet.create({
   },
   transcribeText: {
     color: '#fff',
-    fontFamily,
-  },
-  transcriptBox: {
-    marginTop: 20,
-    padding: 20,
-    backgroundColor: '#fff',
-    borderRadius: rounded,
-    width: '100%',
-  },
-  transcript: {
     fontFamily,
   },
 });

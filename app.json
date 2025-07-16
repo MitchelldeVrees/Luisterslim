@@ -31,7 +31,8 @@
       "typedRoutes": true
     },
     "extra": {
-      "azureEndpoint": "https://audiotranscriben.azurewebsites.net/api/HttpTrigger2?"
+      "azureEndpoint": "https://audiotranscriben.azurewebsites.net/api/HttpTrigger2?",
+      "openaiKey": "YOUR-OPENAI-KEY"
     }
   }
 }
