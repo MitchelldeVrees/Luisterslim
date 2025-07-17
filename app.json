@@ -11,14 +11,16 @@
     "entryPoint": "./node_modules/expo-router/entry",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.mitchelldev.Luisterslim"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "package": "com.mitchelldev.Luisterslim"
     },
     "web": {
       "bundler": "metro",
@@ -34,8 +36,12 @@
     "extra": {
       "azureEndpoint": "https://audiotranscriben.azurewebsites.net/api/HttpTrigger2?",
       "openaiKey": "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",
-      "GROK_API_KEY": "xai-gkVEUemDMkC8pCUkaBPhyzV4BoqMLJvEMq41kK7Tx2LNtkBRJZyJYBqd13hFOb0rIYoG4OlQKtyK7sZb",
-      "GROK_BASE_URL": "https://api.x.ai/v1"
+      "GROK_API_KEY": "xai-wnawiu0slRrtLWsVQGp4qzNOtIgMxLm6LO2Q4lCCjblWqaaFzTQlNbd4bVUoZ7qVAX99MZE4weLFkDVM",
+      "GROK_BASE_URL": "https://api.x.ai/v1",
+      "router": {},
+      "eas": {
+        "projectId": "ebcaa070-f44e-4cfe-9f87-9446acc1a1d2"
+      }
     }
   }
 }
