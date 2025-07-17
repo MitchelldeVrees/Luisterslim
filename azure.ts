@@ -1,7 +1,6 @@
 // azure.ts
-import Constants from 'expo-constants';
 
-const { azureEndpoint } = (Constants.expoConfig?.extra ?? {}) as { azureEndpoint: string };
+const azureEndpoint = process.env.azureEndpoint || '';
 
 export async function uploadToAzure(
   uri: string,
