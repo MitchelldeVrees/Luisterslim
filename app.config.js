@@ -9,4 +9,5 @@ export default ({ config }) => ({
     GROK_API_KEY: process.env.GROK_API_KEY,
     GROK_BASE_URL: process.env.GROK_BASE_URL,
   },
+  
 });
