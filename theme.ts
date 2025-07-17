@@ -1,9 +1,12 @@
 export const colors = {
-  primary: '#3FB0AC',
-  accent: '#FFC857',
-  bg: '#FFF9F4',
+  primary: '#4361EE', // vibrant blue for buttons and highlights
+  accent: '#EEF2FF',  // subtle card background
+  bg: '#F9FAFB',      // light app background
+  text: '#111827',    // default text color
 };
 
-export const fontFamily = 'Poppins-Medium';
+// System font keeps it simple and consistent across platforms
+export const fontFamily = 'System';
 
-export const rounded = 20;
+// Slightly smaller rounding for a modern look
+export const rounded = 12;

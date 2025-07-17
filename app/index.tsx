@@ -3,7 +3,12 @@ import * as DocumentPicker from 'expo-document-picker';
 import { useRouter } from 'expo-router';
 import React from 'react';
 import { Alert, Pressable, StyleSheet, Text, View } from 'react-native';
-import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from 'react-native-reanimated';
+import { Ionicons } from '@expo/vector-icons';
 import { uploadToAzure } from '../azure';
 import { LoadingOverlay } from '../components/LoadingOverlay';
 import { summarizeTranscriptWithGrok } from '../openai';
@@ -64,18 +69,17 @@ export default function App() {
       );
       console.log('Transcript from Azure:', transcript);
 
-      const improved ="";
       const detectedLang = 'nl';
       const summary = await summarizeTranscriptWithGrok(transcript, detectedLang);
       router.push({
         pathname: '/result',
         params: {
-          improved,
+          transcript,
           summary: typeof summary === 'string'
             ? summary
             : JSON.stringify(summary),
         },
-       });
+      });
     } catch (e: any) {
       Alert.alert('Fout', e.message);
     } finally {
@@ -85,8 +89,11 @@ export default function App() {
 
   return (
     <View style={[styles.container, { backgroundColor: colors.bg }]}>
+      <Text style={styles.title}>Luisterslim</Text>
+      <Text style={styles.subtitle}>Kies een geluidsbestand om te transcriberen</Text>
       <Pressable style={styles.button} onPress={pickAudio}>
-        <Text style={styles.buttonText}>Pick Audio</Text>
+        <Ionicons name="document-attach-outline" size={20} color="#fff" />
+        <Text style={styles.buttonText}>Kies audio</Text>
       </Pressable>
       {file && (
         <Animated.View style={[styles.card, animatedStyle]}>
@@ -95,11 +102,14 @@ export default function App() {
             {format(file.duration)} • {Math.round(file.size / 1024)} kB
           </Text>
           <Pressable style={styles.transcribeButton} onPress={transcribe}>
-            <Text style={styles.transcribeText}>Notuleren</Text>
+            <Text style={styles.transcribeText}>Transcribe</Text>
           </Pressable>
         </Animated.View>
       )}
-      <LoadingOverlay visible={overlay} onCancel={() => (overlay.value = withTiming(0, { duration: 300 }))} />
+      <LoadingOverlay
+        visible={overlay}
+        onCancel={() => (overlay.value = withTiming(0, { duration: 300 }))}
+      />
     </View>
   );
 }
@@ -108,10 +118,25 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
     padding: 20,
+    paddingTop: 80,
+  },
+  title: {
+    fontFamily,
+    color: colors.text,
+    fontSize: 32,
+    marginBottom: 8,
+  },
+  subtitle: {
+    fontFamily,
+    color: colors.text,
+    marginBottom: 24,
   },
   button: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
     backgroundColor: colors.primary,
     paddingHorizontal: 24,
     paddingVertical: 12,
@@ -127,17 +152,18 @@ const styles = StyleSheet.create({
     padding: 20,
     width: '100%',
     borderRadius: rounded,
-    backgroundColor: '#fff',
+    backgroundColor: colors.accent,
     alignItems: 'center',
   },
   name: {
     fontFamily,
     fontSize: 16,
+    color: colors.text,
     marginBottom: 4,
   },
   meta: {
     fontFamily,
-    color: colors.accent,
+    color: colors.text,
     marginBottom: 12,
   },
   transcribeButton: {
@@ -145,6 +171,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 10,
     borderRadius: rounded,
+    marginTop: 10,
   },
   transcribeText: {
     color: '#fff',

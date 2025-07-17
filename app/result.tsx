@@ -7,8 +7,8 @@ import { colors, fontFamily, rounded } from '../theme'
 
 export default function Result() {
   // pull them straight from the URL:
-  const { improved = '', summary = '' } = useLocalSearchParams<{
-    improved?: string
+  const { transcript = '', summary = '' } = useLocalSearchParams<{
+    transcript?: string
     summary?: string
   }>()
 
@@ -32,8 +32,8 @@ export default function Result() {
       style={[styles.container, { backgroundColor: colors.bg }]}
       contentContainerStyle={{ padding: 20 }}
     >
-      <Text style={styles.heading}>Verbeterde Transcript</Text>
-      <Text selectable style={styles.transcript}>{improved}</Text>
+      <Text style={styles.heading}>Transcript</Text>
+      <Text selectable style={styles.transcript}>{transcript}</Text>
 
       <View style={styles.card}>
         <Text style={styles.cardTitle}>Samenvatting</Text>
@@ -53,12 +53,17 @@ export default function Result() {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  heading: { fontFamily, fontSize: 24, color: '#000', marginBottom: 16 },
-  transcript: { fontFamily, color: '#000', marginBottom: 24 },
+  heading: { fontFamily, fontSize: 24, color: colors.text, marginBottom: 16 },
+  transcript: { fontFamily, color: colors.text, marginBottom: 24 },
   card: { backgroundColor: colors.accent, padding: 20, borderRadius: rounded },
-  cardTitle: { fontFamily, fontSize: 18, marginBottom: 8 },
-  summary: { fontFamily, color: '#000', marginBottom: 12 },
+  cardTitle: { fontFamily, fontSize: 18, marginBottom: 8, color: colors.text },
+  summary: { fontFamily, color: colors.text, marginBottom: 12 },
   actions: { flexDirection: 'row', gap: 10 },
-  button: { backgroundColor: colors.primary, paddingHorizontal: 16, paddingVertical: 8, borderRadius: rounded },
+  button: {
+    backgroundColor: colors.primary,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: rounded,
+  },
   buttonText: { color: '#fff', fontFamily },
 })
