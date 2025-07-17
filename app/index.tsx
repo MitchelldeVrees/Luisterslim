@@ -1,15 +1,17 @@
 import { Audio } from 'expo-av';
 import * as DocumentPicker from 'expo-document-picker';
+import { useRouter } from 'expo-router';
 import React from 'react';
 import { Alert, Pressable, StyleSheet, Text, View } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
-import { router } from 'expo-router';
 import { uploadToAzure } from '../azure';
 import { LoadingOverlay } from '../components/LoadingOverlay';
-import { improveTranscript, summariseTranscript } from '../openai';
+import { summarizeTranscriptWithGrok } from '../openai';
 import { colors, fontFamily, rounded } from '../theme';
 
 export default function App() {
+
+  const router = useRouter();
   const [file, setFile] = React.useState<
     | {
         uri: string;
@@ -62,9 +64,18 @@ export default function App() {
       );
       console.log('Transcript from Azure:', transcript);
 
-      const improved = await improveTranscript(transcript);
-      const summary = await summariseTranscript(improved);
-      router.push({ pathname: '/result', params: { improved, summary } });
+      const improved ="";
+      const detectedLang = 'nl';
+      const summary = await summarizeTranscriptWithGrok(transcript, detectedLang);
+      router.push({
+        pathname: '/result',
+        params: {
+          improved,
+          summary: typeof summary === 'string'
+            ? summary
+            : JSON.stringify(summary),
+        },
+       });
     } catch (e: any) {
       Alert.alert('Fout', e.message);
     } finally {

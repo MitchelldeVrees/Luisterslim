@@ -1,28 +1,40 @@
-import React from 'react';
-import { useLocalSearchParams } from 'expo-router';
-import { ScrollView, View, Text, StyleSheet, Pressable, Share } from 'react-native';
-import * as Clipboard from 'expo-clipboard';
-import { colors, fontFamily, rounded } from '../theme';
+// app/result.tsx
+import * as Clipboard from 'expo-clipboard'
+import { useLocalSearchParams } from 'expo-router'
+import React from 'react'
+import { Alert, Pressable, ScrollView, Share, StyleSheet, Text, View } from 'react-native'
+import { colors, fontFamily, rounded } from '../theme'
 
 export default function Result() {
-  const params = useLocalSearchParams<{ improved?: string; summary?: string }>();
-  const improved = params.improved ?? '';
-  const summary = params.summary ?? '';
+  // pull them straight from the URL:
+  const { improved = '', summary = '' } = useLocalSearchParams<{
+    improved?: string
+    summary?: string
+  }>()
 
   const copy = async (text: string) => {
-    await Clipboard.setStringAsync(text);
-  };
+    try {
+      await Clipboard.setStringAsync(text)
+      Alert.alert('Gekopieerd!')
+    } catch {
+      Alert.alert('Fout bij kopiëren')
+    }
+  }
 
   const share = async (text: string) => {
     try {
-      await Share.share({ message: text });
+      await Share.share({ message: text })
     } catch {}
-  };
+  }
 
   return (
-    <ScrollView style={[styles.container, { backgroundColor: colors.bg }]} contentContainerStyle={{ padding: 20 }}>
+    <ScrollView
+      style={[styles.container, { backgroundColor: colors.bg }]}
+      contentContainerStyle={{ padding: 20 }}
+    >
       <Text style={styles.heading}>Verbeterde Transcript</Text>
       <Text selectable style={styles.transcript}>{improved}</Text>
+
       <View style={styles.card}>
         <Text style={styles.cardTitle}>Samenvatting</Text>
         <Text selectable style={styles.summary}>{summary}</Text>
@@ -36,7 +48,7 @@ export default function Result() {
         </View>
       </View>
     </ScrollView>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
@@ -49,4 +61,4 @@ const styles = StyleSheet.create({
   actions: { flexDirection: 'row', gap: 10 },
   button: { backgroundColor: colors.primary, paddingHorizontal: 16, paddingVertical: 8, borderRadius: rounded },
   buttonText: { color: '#fff', fontFamily },
-});
+})
