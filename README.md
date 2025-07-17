@@ -10,7 +10,14 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
    npm install
    ```
 
-2. Start the app
+2. Copy the example environment file and fill in your API keys:
+
+   ```bash
+   cp .env.example .env
+   # edit .env and add your secrets
+   ```
+
+3. Start the app
 
    ```bash
    npx expo start
