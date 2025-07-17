@@ -1,81 +1,69 @@
 // app/result.tsx
-
-import * as Clipboard from 'expo-clipboard';
-import { useLocalSearchParams } from 'expo-router';
-import React from 'react';
-import { Alert, Pressable, ScrollView, Share, Text, View } from 'react-native';
+import * as Clipboard from 'expo-clipboard'
+import { useLocalSearchParams } from 'expo-router'
+import React from 'react'
+import { Alert, Pressable, ScrollView, Share, StyleSheet, Text, View } from 'react-native'
+import { colors, fontFamily, rounded } from '../theme'
 
 export default function Result() {
+  // pull them straight from the URL:
   const { transcript = '', summary = '' } = useLocalSearchParams<{
-    transcript?: string;
-    summary?: string;
-  }>();
+    transcript?: string
+    summary?: string
+  }>()
 
   const copy = async (text: string) => {
     try {
-      await Clipboard.setStringAsync(text);
-      Alert.alert('Gekopieerd!');
+      await Clipboard.setStringAsync(text)
+      Alert.alert('Gekopieerd!')
     } catch {
-      Alert.alert('Fout bij kopiëren');
+      Alert.alert('Fout bij kopiëren')
     }
-  };
+  }
 
   const share = async (text: string) => {
     try {
-      await Share.share({ message: text });
+      await Share.share({ message: text })
     } catch {}
-  };
+  }
 
   return (
     <ScrollView
-      className="flex-1 bg-bg px-5 pt-6"
-      contentContainerStyle={{ paddingBottom: 24 }}
+      style={[styles.container, { backgroundColor: colors.bg }]}
+      contentContainerStyle={{ padding: 20 }}
     >
-      {/* Transcript Section */}
-      <Text className="text-2xl font-bold text-text mb-4">
-        Transcript
-      </Text>                                                  
+      <Text style={styles.heading}>Transcript</Text>
+      <Text selectable style={styles.transcript}>{transcript}</Text>
 
-      <Text
-        selectable
-        className="text-text mb-8"
-      >
-        {transcript}
-      </Text>
-
-      {/* Summary Card */}
-      <View className="bg-accent rounded-lg p-6 shadow-md mb-6">
-        <Text className="text-xl font-semibold text-text mb-3">
-          Samenvatting
-        </Text>                                  
-
-        <Text
-          selectable
-          className="text-text mb-4"
-        >
-          {summary}
-        </Text>
-
-        {/* Action Buttons */}
-        <View className="flex-row space-x-3">
-          <Pressable
-            onPress={() => copy(summary)}
-            className="flex-1 bg-primary py-3 rounded-lg items-center"
-          >
-            <Text className="text-white font-medium">
-              Kopieer
-            </Text>
+      <View style={styles.card}>
+        <Text style={styles.cardTitle}>Samenvatting</Text>
+        <Text selectable style={styles.summary}>{summary}</Text>
+        <View style={styles.actions}>
+          <Pressable style={styles.button} onPress={() => copy(summary)}>
+            <Text style={styles.buttonText}>Kopieer</Text>
           </Pressable>
-          <Pressable
-            onPress={() => share(summary)}
-            className="flex-1 border border-primary py-3 rounded-lg items-center"
-          >
-            <Text className="text-primary font-medium">
-              Deel
-            </Text>
+          <Pressable style={styles.button} onPress={() => share(summary)}>
+            <Text style={styles.buttonText}>Deel</Text>
           </Pressable>
         </View>
       </View>
     </ScrollView>
-  );
+  )
 }
+
+const styles = StyleSheet.create({
+  container: { flex: 1 },
+  heading: { fontFamily, fontSize: 24, color: colors.text, marginBottom: 16 },
+  transcript: { fontFamily, color: colors.text, marginBottom: 24 },
+  card: { backgroundColor: colors.accent, padding: 20, borderRadius: rounded },
+  cardTitle: { fontFamily, fontSize: 18, marginBottom: 8, color: colors.text },
+  summary: { fontFamily, color: colors.text, marginBottom: 12 },
+  actions: { flexDirection: 'row', gap: 10 },
+  button: {
+    backgroundColor: colors.primary,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: rounded,
+  },
+  buttonText: { color: '#fff', fontFamily },
+})
