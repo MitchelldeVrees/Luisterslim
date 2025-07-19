@@ -3,6 +3,7 @@ export const colors = {
   accent: '#EEF2FF',  // subtle card background
   bg: '#F9FAFB',      // light app background
   text: '#111827',    // default text color
+  record: '#DC2626',  // red for recording actions
 };
 
 // System font keeps it simple and consistent across platforms

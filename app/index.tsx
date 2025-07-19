@@ -95,6 +95,13 @@ export default function App() {
         <Ionicons name="document-attach-outline" size={20} color="#fff" />
         <Text style={styles.buttonText}>Kies audio</Text>
       </Pressable>
+      <Pressable
+        style={[styles.button, styles.recordButton]}
+        onPress={() => router.push('/record')}
+      >
+        <Ionicons name="mic" size={20} color="#fff" />
+        <Text style={styles.buttonText}>Opnemen</Text>
+      </Pressable>
       {file && (
         <Animated.View style={[styles.card, animatedStyle]}>
           <Text style={styles.name}>{truncate(file.name)}</Text>
@@ -141,6 +148,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
     paddingVertical: 12,
     borderRadius: rounded,
+  },
+  recordButton: {
+    backgroundColor: colors.record,
+    marginTop: 12,
   },
   buttonText: {
     color: '#fff',
